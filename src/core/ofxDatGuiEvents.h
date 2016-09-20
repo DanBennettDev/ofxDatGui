@@ -30,6 +30,7 @@ class ofxDatGuiTextInput;
 class ofxDatGui2dPad;
 class ofxDatGuiColorPicker;
 class ofxDatGuiMatrix;
+class ofxDatGuiPiano;
 class ofxDatGuiScrollView;
 
 enum ofxDatGuiEventType
@@ -174,4 +175,19 @@ class ofxDatGuiMatrixEvent{
 };
 
 
+
+class ofxDatGuiPianoEvent
+{
+
+public:
+    ofxDatGuiPianoEvent(ofxDatGuiPiano* t, int i, bool e)
+    {
+        child = i;
+        target = t;
+        enabled = e;
+    }
+    int child;
+    bool enabled;
+    ofxDatGuiPiano* target;
+};
 

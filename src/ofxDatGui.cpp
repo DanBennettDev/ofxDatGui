@@ -396,6 +396,16 @@ ofxDatGuiMatrix* ofxDatGui::addMatrix(string label, int numButtons, bool showLab
     return matrix;
 }
 
+ofxDatGuiPiano* ofxDatGui::addPiano(string label, int octaves)
+{
+    ofxDatGuiPiano* piano = new ofxDatGuiPiano(label, octaves);
+    piano->onPianoEvent(this, &ofxDatGui::onPianoEventCallback);
+    attachItem(piano);
+    return piano;
+}
+
+
+
 ofxDatGuiFolder* ofxDatGui::addFolder(string label, ofColor color)
 {
     ofxDatGuiFolder* folder = new ofxDatGuiFolder(label, color);
@@ -404,6 +414,8 @@ ofxDatGuiFolder* ofxDatGui::addFolder(string label, ofColor color)
     folder->onSliderEvent(this, &ofxDatGui::onSliderEventCallback);
     folder->on2dPadEvent(this, &ofxDatGui::on2dPadEventCallback);
     folder->onMatrixEvent(this, &ofxDatGui::onMatrixEventCallback);
+    folder->onPianoEvent(this, &ofxDatGui::onPianoEventCallback);
+
     folder->onTextInputEvent(this, &ofxDatGui::onTextInputEventCallback);
     folder->onColorPickerEvent(this, &ofxDatGui::onColorPickerEventCallback);
     folder->onInternalEvent(this, &ofxDatGui::onInternalEventCallback);
@@ -601,6 +613,26 @@ ofxDatGuiMatrix* ofxDatGui::getMatrix(string ml, string fl)
     return o;
 }
 
+ofxDatGuiPiano* ofxDatGui::getPiano(string ml, string fl)
+{
+    ofxDatGuiPiano* o = nullptr;
+    if (fl != "") {
+        ofxDatGuiFolder* f = static_cast<ofxDatGuiFolder*>(getComponent(ofxDatGuiType::FOLDER, fl));
+        if (f) o = static_cast<ofxDatGuiPiano*>(f->getComponent(ofxDatGuiType::PIANO, ml));
+    } else {
+        o = static_cast<ofxDatGuiPiano*>(getComponent(ofxDatGuiType::PIANO, ml));
+    }
+    if (o == nullptr) {
+        o = ofxDatGuiPiano::getInstance();
+        ofxDatGuiLog::write(ofxDatGuiMsg::COMPONENT_NOT_FOUND, fl != "" ? fl + "-" + ml : ml);
+        trash.push_back(o);
+    }
+    return o;
+}
+
+
+
+
 ofxDatGuiDropdown* ofxDatGui::getDropdown(string dl)
 {
     ofxDatGuiDropdown* o = static_cast<ofxDatGuiDropdown*>(getComponent(ofxDatGuiType::DROPDOWN, dl));
@@ -743,6 +775,16 @@ void ofxDatGui::onMatrixEventCallback(ofxDatGuiMatrixEvent e)
         ofxDatGuiLog::write(ofxDatGuiMsg::EVENT_HANDLER_NULL);
     }
 }
+
+void ofxDatGui::onPianoEventCallback(ofxDatGuiPianoEvent e)
+{
+    if (pianoEventCallback != nullptr) {
+        pianoEventCallback(e);
+    } else {
+        ofxDatGuiLog::write(ofxDatGuiMsg::EVENT_HANDLER_NULL);
+    }
+}
+
 
 void ofxDatGui::onInternalEventCallback(ofxDatGuiInternalEvent e)
 {

@@ -32,6 +32,8 @@
 #include "ofxDatGuiTimeGraph.h"
 #include "ofxDatGuiScrollView.h"
 
+#include "ofxDatGuiPiano.h"
+
 class ofxDatGuiGroup : public ofxDatGuiButton {
 
     public:
@@ -255,6 +257,17 @@ class ofxDatGuiFolder : public ofxDatGuiGroup {
             }
         }
 
+        void dispatchPianoEvent(ofxDatGuiPianoEvent e)
+        {
+            if (pianoEventCallback != nullptr) {
+                pianoEventCallback(e);
+            } else {
+                ofxDatGuiLog::write(ofxDatGuiMsg::EVENT_HANDLER_NULL);
+            }
+        }
+
+
+
     /*
         component add methods
     */
@@ -368,6 +381,16 @@ class ofxDatGuiFolder : public ofxDatGuiGroup {
             return matrix;
         }
     
+        ofxDatGuiPiano* addPiano(string label, int octaves)
+        {
+            ofxDatGuiPiano* piano = new ofxDatGuiPiano(label, octaves);
+            piano->setStripeColor(mStyle.stripe.color);
+            piano->onPianoEvent(this, &ofxDatGuiFolder::dispatchPianoEvent);
+            attachItem(piano);
+            return piano;
+        }
+
+
         ofxDatGuiWaveMonitor* addWaveMonitor(string label, float frequency, float amplitude)
         {
             ofxDatGuiWaveMonitor* monitor = new ofxDatGuiWaveMonitor(label, frequency, amplitude);

@@ -65,6 +65,13 @@ xcuserdata
 *.pdb
 *.ilk
 *.aps
+*.vcxproj.filters
+*.vcxproj
+*.vcxproj.user
+*.rc
+*.sln
+*.VC.db
+
 ipch/
 
 # Eclipse
