@@ -146,7 +146,7 @@ class ofxDatGuiPianoKey : public ofxDatGuiInteractiveObject {
         int whiteIndex(int index)
         {
             vector<int> _whiteIndex = {0,1,1,2,2,3,4,4,5,5,6,6};
-            return _whiteIndex[index%12];
+            return _whiteIndex[index%12] + (index / 12)*7;
         }
 
 
@@ -211,18 +211,18 @@ class ofxDatGuiPiano : public ofxDatGuiComponent
             ofxDatGuiComponent::setWidth(width, labelWidth);
             kKeyboardRect.x = x;
             kKeyboardRect.y = y;
-            kKeyboardRect.width = mStyle.width - mStyle.padding - mLabel.width;
+            kKeyboardRect.width = mStyle.width; // -mStyle.padding;
 
 
             mStyle.height = 30;
-            kKeyboardRect.height = mStyle.height - (mStyle.padding * 2);
+            kKeyboardRect.height = mStyle.height; // -(mStyle.padding * 2);
         }
     
         void setPosition(int x, int y)
         {
             ofxDatGuiComponent::setPosition(x, y);
             kKeyboardRect.x = x;
-            kKeyboardRect.y = y + mStyle.padding;
+            kKeyboardRect.y = y +mStyle.padding * 2;
         }
     
         bool hitTest(ofPoint m)
@@ -243,7 +243,7 @@ class ofxDatGuiPiano : public ofxDatGuiComponent
                 ofxDatGuiComponent::draw();
                 ofSetColor(kFillColor);
                 ofDrawRectangle(kKeyboardRect);
-                for(int i=0; i<keys.size(); i++) keys[i].draw(x, y);
+                for(int i=0; i<keys.size(); i++) keys[i].draw(x+ mStyle.padding, y + mStyle.padding);
             ofPopStyle();
         }
     
@@ -314,7 +314,6 @@ class ofxDatGuiPiano : public ofxDatGuiComponent
 
     private:
         int kOctaves;
-        int kKeyPadding;
         bool kSingleNoteMode;
         ofColor kFillColor;
         ofRectangle kKeyboardRect;
