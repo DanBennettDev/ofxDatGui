@@ -77,7 +77,10 @@ class ofxDatGuiTimeGraph : public ofxDatGuiComponent {
                 ofxDatGuiComponent::draw();
                 ofSetColor(mStyle.color.inputArea);
                 ofDrawRectangle(x + mPlotterRect.x, y + mPlotterRect.y, mPlotterRect.width, mPlotterRect.height);
-                glColor3ub(mColor.fills.r, mColor.fills.g, mColor.fills.b);
+                //glColor3ub(mColor.fills.r, mColor.fills.g, mColor.fills.b);
+                //glColor3ub(255, 255, 255);
+                ofSetColor(mColor.fills.r, mColor.fills.g, mColor.fills.b);
+
                 (*this.*mDrawFunc)();
             ofPopStyle();
         }
@@ -111,21 +114,30 @@ class ofxDatGuiTimeGraph : public ofxDatGuiComponent {
         {
             float px = this->x + mPlotterRect.x;
             float py = this->y + mPlotterRect.y;
-            glLineWidth(mLineWeight);
-            glBegin(GL_LINE_STRIP);
-            for (int i=0; i<pts.size(); i++) glVertex2f(px+pts[i].x, py+pts[i].y);
-            glEnd();
+            //glLineWidth(mLineWeight);
+            //glBegin(GL_LINE_STRIP);
+            ofPoint prev(px + pts[0].x, py + pts[0].y);
+            for (int i = 0; i < pts.size(); i++) {
+                ofPoint curr = ofPoint(px + pts[i].x, py + pts[i].y);
+                //glVertex2f(px + pts[i].x, py + pts[i].y);
+                ofDrawLine(prev, curr);
+                prev = curr;
+            }
+            //glEnd();
         }
     
         void drawPoints()
         {
             float px = this->x + mPlotterRect.x;
             float py = this->y + mPlotterRect.y;
-            glPointSize(mLineWeight);
-            glLineWidth(mLineWeight);
-            glBegin(GL_POINTS);
-            for (int i=0; i<pts.size(); i++) glVertex2f(px+pts[i].x, py+pts[i].y);
-            glEnd();
+            //glPointSize(mLineWeight);
+            //glLineWidth(mLineWeight);
+            //glBegin(GL_POINTS);
+            for (int i = 0; i < pts.size(); i++) {
+                //glVertex2f(px + pts[i].x, py + pts[i].y);
+                ofDrawCircle(ofPoint(px + pts[i].x, py + pts[i].y), 1);
+            };
+            //glEnd();
         }
     
         void setPosition(int x, int y)
@@ -280,6 +292,12 @@ class ofxDatGuiValuePlotter : public ofxDatGuiTimeGraph {
             return mMax-mMin;
         }
     
+        void setTheme(const ofxDatGuiTheme* tmplt)
+        {
+            ofxDatGuiTimeGraph::setTheme(tmplt);
+            update(true);
+        }
+
         void update(bool ignoreMouseEvents)
         {
         // shift all points over before adding new value //
