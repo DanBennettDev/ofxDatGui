@@ -50,6 +50,7 @@ class ofxDatGuiTheme{
         {
             if (ofxDatGuiIsRetina()){
                 font.size *=2;
+                font2.size *= 2;
                 stripe.width *=2;
                 layout.width *=2;
                 layout.height *=2;
@@ -74,6 +75,8 @@ class ofxDatGuiTheme{
             icon.groupClosed->load(icon.groupClosedPath);
             icon.rainbow->load(icon.rainbowPath);
             font.ptr = ofxSmartFont::add(font.file, font.size);
+            font2.ptr = ofxSmartFont::add(font2.file, font2.size);
+
         }
     
     /*
@@ -224,7 +227,7 @@ class ofxDatGuiTheme{
             int size = 6;
             string file = AssetPath + "ofxbraitsch/fonts/Verdana.ttf";
             shared_ptr<ofxSmartFont> ptr;
-        } font;
+        } font, font2;
     
         struct{
             shared_ptr<ofImage> rainbow = make_shared<ofImage>();

@@ -211,18 +211,18 @@ class ofxDatGuiPiano : public ofxDatGuiComponent
             ofxDatGuiComponent::setWidth(width, labelWidth);
             kKeyboardRect.x = x;
             kKeyboardRect.y = y;
-            kKeyboardRect.width = mStyle.width; // -mStyle.padding;
+            kKeyboardRect.width = mStyle.width -mStyle.padding;
 
 
             mStyle.height = 30;
-            kKeyboardRect.height = mStyle.height; // -(mStyle.padding * 2);
+            kKeyboardRect.height = mStyle.height -(mStyle.padding * 2);
         }
     
         void setPosition(int x, int y)
         {
             ofxDatGuiComponent::setPosition(x, y);
             kKeyboardRect.x = x;
-            kKeyboardRect.y = y +mStyle.padding * 2;
+            kKeyboardRect.y = y +mStyle.padding;
         }
     
         bool hitTest(ofPoint m)

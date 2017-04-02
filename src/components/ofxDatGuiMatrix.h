@@ -53,7 +53,7 @@ public:
         if (mShowLabels) {
             ofSetColor(mLabelColor);
             mFont->draw(labels[mIndex], 
-                        mRect.x + mRect.width / 2 - (mFontRect.width * labels[mIndex].length())/ 2,
+                        mRect.x + mRect.width / 2 - (((mFontRect.width +1) * labels[mIndex].length())/ 2),
                         mRect.y + mRect.height / 2 + mFontRect.height / 2);
         }
         ofPopStyle();
@@ -106,8 +106,9 @@ public:
 
     void setTheme(const ofxDatGuiTheme* theme)
     {
-        mFont = theme->font.ptr;
-        mFontRect = mFont->rect(ofToString(mIndex + 1));
+        mFont = theme->font2.ptr;
+
+        mFontRect = mFont->rect(ofToString(mIndex + 2));
         mBkgdColor = theme->color.matrix.normal.button;
         mLabelColor = theme->color.matrix.normal.label;
         colors.normal.label = theme->color.matrix.normal.label;
@@ -245,7 +246,11 @@ public:
     void setSelected(vector<int> v)
     {
         clear();
-        for (int i = 0; i<v.size(); i++) btns[v[i]].setSelected(true);
+        for (int i = 0; i < v.size(); i++) {
+            if (btns.size() > v[i]) {
+                btns[v[i]].setSelected(true);
+            } 
+        }
     }
 
     vector<int> getSelected()
