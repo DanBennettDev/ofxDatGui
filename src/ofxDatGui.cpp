@@ -404,7 +404,13 @@ ofxDatGuiPiano* ofxDatGui::addPiano(string label, int octaves)
     return piano;
 }
 
-
+ofxDatGuiSelector* ofxDatGui::addSelector(string label)
+{
+    ofxDatGuiSelector* selector = new ofxDatGuiSelector(label);
+    selector->onSelectorEvent(this, &ofxDatGui::onSelectorEventCallback);
+    attachItem(selector);
+    return selector;
+}
 
 ofxDatGuiFolder* ofxDatGui::addFolder(string label, ofColor color)
 {
@@ -632,6 +638,25 @@ ofxDatGuiPiano* ofxDatGui::getPiano(string ml, string fl)
 
 
 
+ofxDatGuiSelector* ofxDatGui::getSelector(string ml, string fl)
+{
+    ofxDatGuiSelector* o = nullptr;
+    if (fl != "") {
+        ofxDatGuiFolder* f = static_cast<ofxDatGuiFolder*>(getComponent(ofxDatGuiType::FOLDER, fl));
+        if (f) o = static_cast<ofxDatGuiSelector*>(f->getComponent(ofxDatGuiType::SELECTOR, ml));
+    } else {
+        o = static_cast<ofxDatGuiSelector*>(getComponent(ofxDatGuiType::SELECTOR, ml));
+    }
+    if (o == nullptr) {
+        o = ofxDatGuiSelector::getInstance();
+        ofxDatGuiLog::write(ofxDatGuiMsg::COMPONENT_NOT_FOUND, fl != "" ? fl + "-" + ml : ml);
+        trash.push_back(o);
+    }
+    return o;
+}
+
+
+
 
 ofxDatGuiDropdown* ofxDatGui::getDropdown(string dl)
 {
@@ -775,6 +800,16 @@ void ofxDatGui::onMatrixEventCallback(ofxDatGuiMatrixEvent e)
         ofxDatGuiLog::write(ofxDatGuiMsg::EVENT_HANDLER_NULL);
     }
 }
+
+void ofxDatGui::onSelectorEventCallback(ofxDatGuiSelectorEvent e)
+{
+    if (selectorEventCallback != nullptr) {
+        selectorEventCallback(e);
+    } else {
+        ofxDatGuiLog::write(ofxDatGuiMsg::EVENT_HANDLER_NULL);
+    }
+}
+
 
 void ofxDatGui::onPianoEventCallback(ofxDatGuiPianoEvent e)
 {

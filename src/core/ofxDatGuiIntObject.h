@@ -178,6 +178,7 @@ class ofxDatGuiInteractiveObject{
             matrixEventCallback = callback;
         }
 
+////////// DAN's STUFF  START ////////////////////////////////////////////////////////////////////
 
         // piano events //
         typedef std::function<void(ofxDatGuiPianoEvent)> onPianoEventCallback;
@@ -195,6 +196,23 @@ class ofxDatGuiInteractiveObject{
         }
 
 
+        // Selector Events //
+        typedef std::function<void(ofxDatGuiSelectorEvent)> onSelectorEventCallback;
+        onSelectorEventCallback selectorEventCallback;
+
+        template<typename T, typename args, class ListenerClass>
+        void onSelectorEvent(T* owner, void (ListenerClass::*listenerMethod)(args))
+        {
+            selectorEventCallback = std::bind(listenerMethod, owner, std::placeholders::_1);
+        }
+
+        void onSelectorEvent(onSelectorEventCallback callback)
+        {
+            selectorEventCallback = callback;
+        }
+
+
+////////// DAN's STUFF  END ////////////////////////////////////////////////////////////////////
 
 
     // scrollview events //

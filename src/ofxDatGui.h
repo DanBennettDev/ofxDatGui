@@ -79,7 +79,11 @@ class ofxDatGui : public ofxDatGuiInteractiveObject
         ofxDatGuiValuePlotter* addValuePlotter(string label, float min, float max);
         ofxDatGuiColorPicker* addColorPicker(string label, ofColor color = ofColor::black);
         ofxDatGuiMatrix* addMatrix(string label, int numButtons, bool showLabels = false);
+        
+        // my additions
         ofxDatGuiPiano* addPiano(string label, int octaves);
+        ofxDatGuiSelector* addSelector(string label);
+
 
         ofxDatGuiFolder* addFolder(string label, ofColor color = ofColor::white);
         ofxDatGuiFolder* addFolder(ofxDatGuiFolder* folder);
@@ -95,6 +99,8 @@ class ofxDatGui : public ofxDatGuiInteractiveObject
         ofxDatGuiColorPicker* getColorPicker(string label, string folder = "");
         ofxDatGuiMatrix* getMatrix(string label, string folder = "");
         ofxDatGuiPiano* getPiano(string label, string folder = "");
+        ofxDatGuiSelector* getSelector(string label, string folder = "");
+
 
         ofxDatGuiWaveMonitor* getWaveMonitor(string label, string folder = "");
         ofxDatGuiValuePlotter* getValuePlotter(string label, string folder = "");
@@ -157,5 +163,6 @@ class ofxDatGui : public ofxDatGuiInteractiveObject
         void onColorPickerEventCallback(ofxDatGuiColorPickerEvent e);
         void onMatrixEventCallback(ofxDatGuiMatrixEvent e);
         void onPianoEventCallback(ofxDatGuiPianoEvent e);
+        void onSelectorEventCallback(ofxDatGuiSelectorEvent e);
 
 };
