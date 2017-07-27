@@ -219,6 +219,16 @@ public:
 
     static ofxDatGuiSelector* getInstance() { return new ofxDatGuiSelector("X"); }
 
+    void setSelected(unsigned item)
+    {
+        if (item < 0) {
+            item = 0;
+        } else if (item >= mOptions.size()) {
+            item = mOptions.size() - 1;
+        }
+            
+        optionSelected = item;
+    }
 
 
     void setOptions(vector<string> options)
@@ -247,9 +257,9 @@ protected:
         for (int i = 0; i<btns.size(); i++) btns[i].setSelected(false);
         changeOption(e.index);
 
-        if (SelectorEventCallback != nullptr) {
-            ofxDatGuiSelectorEvent ev(this, e.index, true);
-            SelectorEventCallback(ev);
+        if (selectorEventCallback != nullptr) {
+            ofxDatGuiSelectorEvent ev(this, optionSelected, true);
+            selectorEventCallback(ev);
         } else {
             ofxDatGuiLog::write(ofxDatGuiMsg::EVENT_HANDLER_NULL);
         }
@@ -276,7 +286,7 @@ protected:
                 optionSelected++;
             }
         } else {
-            // up
+            // down
             if (optionSelected <= 0) {
                 optionSelected = 0;
             } else {
@@ -302,6 +312,5 @@ private:
     ofRectangle mSelectorRect;
     vector<ofxDatGuiSelectorButton> btns;
     typedef std::function<void(ofxDatGuiSelectorEvent)> onSelectorEventCallback;
-    onSelectorEventCallback SelectorEventCallback;
 };
 
