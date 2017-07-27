@@ -21,7 +21,7 @@ public:
         origin.y = y;
     }
 
-    void draw(int x, int y, vector<string> &labels)
+    void draw(int x, int y, string label)
     {
         mRect.x = x + origin.x;
         mRect.y = y + origin.y;
@@ -31,8 +31,8 @@ public:
         ofDrawRectangle(mRect);
         if (mShowLabels) {
             ofSetColor(mLabelColor);
-            mFont->draw(labels[mIndex],
-                mRect.x + mRect.width / 2 - (((mFontRect.width + 1) * labels[mIndex].length()) / 2),
+            mFont->draw(label,
+                mRect.x + mRect.width / 2 - (((mFontRect.width + 1) * label.length()) / 2),
                 mRect.y + mRect.height / 2 + mFontRect.height / 2);
         }
         ofPopStyle();
@@ -143,11 +143,7 @@ public:
     ofxDatGuiSelector(string label) : ofxDatGuiComponent(label)
     {
         mRadioMode = false;
-        mNumButtons = 2;
-        mOptions.resize(mNumButtons);
-        mOptions[0] = "-";
-        mOptions[1] = "+";
-
+        optionSelected = 0;
         mType = ofxDatGuiType::SELECTOR;
         setTheme(ofxDatGuiComponent::theme.get());
     }
@@ -155,7 +151,11 @@ public:
     void setTheme(const ofxDatGuiTheme* theme)
     {
         setComponentStyle(theme);
+        mFont = theme->font.ptr;
+        mFontRect = mFont->rect("1");
+
         mFillColor = theme->color.inputAreaBackground;
+        mTextColor = theme->color.textInput.text;
         mButtonSize = theme->layout.matrix.buttonSize;
         mButtonPadding = theme->layout.matrix.buttonPadding;
         mStyle.stripe.color = theme->stripe.matrix;
@@ -185,11 +185,6 @@ public:
         mSelectorRect.y = y + mStyle.padding;
     }
 
-    void setRadioMode(bool enabled)
-    {
-        mRadioMode = enabled;
-    }
-
     bool hitTest(ofPoint m)
     {
         if (mSelectorRect.inside(m)) {
@@ -208,37 +203,27 @@ public:
         ofxDatGuiComponent::draw();
         ofSetColor(mFillColor);
         ofDrawRectangle(mSelectorRect);
-        for (int i = 0; i<mNumButtons && i<btns.size(); i++) {
-            btns[i].draw(x + mLabel.width, y, mOptions);
+        if (btns.size()==2) {
+            btns[0].draw(x + mLabel.width, y, "-");
+            btns[1].draw(x + mLabel.width, y, "+");
         }
+        ofSetColor(mTextColor);
+
+        mFont->draw(mOptions[optionSelected], x + mLabel.width +mButtonSize*2.5 - mFontRect.width/2,
+            mSelectorRect.y + mSelectorRect.height / 2 + mFontRect.height / 2);
+
+
         ofPopStyle();
     }
 
 
-    ofxDatGuiSelectorButton* getChildAt(int index)
-    {
-        return &btns[index];
-    }
-
     static ofxDatGuiSelector* getInstance() { return new ofxDatGuiSelector("X"); }
 
-    void setButtonCount(int numButtons)
-    {
-        if (numButtons < 1) { numButtons = 1; }
-        int prevCount = mNumButtons;
-        mNumButtons = numButtons;
-        mOptions.resize(numButtons);
-        if (numButtons > mNumButtons) {
-            while (numButtons < mNumButtons) {
-                mOptions[numButtons] = ofToString(numButtons);
-                numButtons++;
-            }
-        }
 
-    }
 
     void setOptions(vector<string> options)
     {
+        mOptions.resize(options.size());
         vector<string>::size_type i = 0;
         while (i < mOptions.size() && i < options.size()) {
             mOptions[i] = options[i].substr(0, 3);
@@ -260,6 +245,8 @@ protected:
     {
         // deselect all buttons - don't want select behaviour we're inheriting from button matrix //
         for (int i = 0; i<btns.size(); i++) btns[i].setSelected(false);
+        changeOption(e.index);
+
         if (SelectorEventCallback != nullptr) {
             ofxDatGuiSelectorEvent ev(this, e.index, true);
             SelectorEventCallback(ev);
@@ -271,7 +258,7 @@ protected:
     void attachButtons(const ofxDatGuiTheme* theme)
     {
         btns.clear();
-        for (int i = 0; i < mNumButtons; i++) {
+        for (int i = 0; i < 2; i++) {
             ofxDatGuiSelectorButton btn(mButtonSize, i, mShowLabels);
             btn.setTheme(theme);
             btn.onInternalEvent(this, &ofxDatGuiSelector::onButtonSelected);
@@ -279,15 +266,39 @@ protected:
         }
     }
 
+    void changeOption(int buttonIndex)
+    {
+        if (buttonIndex == 1) {
+            // up
+            if (optionSelected >= mOptions.size()-1) {
+                optionSelected = mOptions.size()-1;
+            } else {
+                optionSelected++;
+            }
+        } else {
+            // up
+            if (optionSelected <= 0) {
+                optionSelected = 0;
+            } else {
+                optionSelected--;
+            }
+        }
+    }
+
 private:
 
     int mButtonSize;
-    int mNumButtons;
+    int optionSelected;
     int mButtonPadding;
     bool mRadioMode;
     bool mShowLabels;
+
+    ofRectangle mFontRect;
+    shared_ptr<ofxSmartFont> mFont;
+
     vector<string> mOptions;
     ofColor mFillColor;
+    ofColor mTextColor;
     ofRectangle mSelectorRect;
     vector<ofxDatGuiSelectorButton> btns;
     typedef std::function<void(ofxDatGuiSelectorEvent)> onSelectorEventCallback;
