@@ -11,7 +11,6 @@ public:
     {
         mIndex = index;
         mSelected = false;
-        mShowLabels = showLabels;
         mRect = ofRectangle(0, 0, size, size);
     }
 
@@ -29,12 +28,13 @@ public:
         ofFill();
         ofSetColor(mBkgdColor);
         ofDrawRectangle(mRect);
-        if (mShowLabels) {
-            ofSetColor(mLabelColor);
-            mFont->draw(label,
-                mRect.x + mRect.width / 2 - (((mFontRect.width + 1) * label.length()) / 2),
-                mRect.y + mRect.height / 2 + mFontRect.height / 2);
-        }
+        ofSetColor(mLabelColor);
+        //ofSetColor(ofColor::darkGray);
+
+        mFont->draw(label,
+            mRect.x + mRect.width / 2 - (((mFontRect.width + 1) * label.length()) / 2),
+            mRect.y + mRect.height / 2 + mFontRect.height / 2);
+
         ofPopStyle();
     }
 
@@ -55,7 +55,7 @@ public:
 
     void setSelected(bool selected)
     {
-        mSelected = selected;
+        mSelected = false;
     }
 
     bool getSelected()
@@ -77,7 +77,7 @@ public:
     void onMouseRelease(ofPoint m)
     {
         if (mRect.inside(m)) {
-            mSelected = !mSelected;
+            mSelected = false;
             ofxDatGuiInternalEvent e(ofxDatGuiEventType::MATRIX_BUTTON_TOGGLED, mIndex);
             internalEventCallback(e);
         }
@@ -107,7 +107,6 @@ private:
     ofColor mBkgdColor;
     ofColor mLabelColor;
     bool mSelected;
-    bool mShowLabels;
     ofRectangle mFontRect;
     shared_ptr<ofxSmartFont> mFont;
     struct
@@ -203,13 +202,13 @@ public:
         ofxDatGuiComponent::draw();
         ofSetColor(mFillColor);
         ofDrawRectangle(mSelectorRect);
-        if (btns.size()==2) {
+        if (btns.size()>=2) {
             btns[0].draw(x + mLabel.width, y, "-");
-            btns[1].draw(x + mLabel.width, y, "+");
+            btns[1].draw(x + mLabel.width + mButtonSize * 2, y, "+");
         }
         ofSetColor(mTextColor);
 
-        mFont->draw(mOptions[optionSelected], x + mLabel.width +mButtonSize*2.5 - mFontRect.width/2,
+        mFont->draw(mOptions[optionSelected], x + mLabel.width +mButtonSize * 2 - mFontRect.width/2,
             mSelectorRect.y + mSelectorRect.height / 2 + mFontRect.height / 2);
 
 
